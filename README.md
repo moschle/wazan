@@ -36,8 +36,7 @@ private research state into `snapshots/knowledge_snapshot_<date>.tar.gz`. Restor
 with `python knowledge_export.py restore <file>` or via the Export page. Share this
 archive only within a defined research group (cf. § 60d UrhG), never publicly.
 
-**One-time cleanup:** old commits still contain full texts. Run
-`scripts/purge_history.sh` (requires `git-filter-repo`), then force-push.
+Full texts were removed from the repository and its entire history in August 2026.
 
 ## Corpus model (v3)
 
@@ -102,9 +101,14 @@ the library schema that was never populated. Nothing imported it.
 
 - `analyzer.py` — core analysis (to be split into a package; see Roadmap)
 - `knowledge_export.py` — feature export / snapshot / restore
-- `pages/` — Streamlit UI (1 Analyze, 2 Library, 3 Visualize, 4 Corpus, 5 Export)
-- `scripts/` — maintenance scripts (batch migration, history purge) and the OCR pipeline
-  (`ocr_tesseract.py`; Farzona worked example: `ocr_farzona*.py`, `farzona_*.py`)
+- `pages/` — Streamlit UI (1 Analyze, 2 Library, 3 Visualize, 4 Corpus, 5 Export,
+  6 Timeline, 7 Analysis, 8 Method)
+- `data/validierung/` — hand-labelled samples used to validate metre and free-verse
+  detection (IDs and hashes only, no texts)
+- `tajik_corpus/exports/features_public.json` — the shareable feature layer
+- `scripts/` — maintenance scripts (migration, metre/MTLD recalculation, review rounds)
+  and the OCR pipeline (`ocr_tesseract.py`; Farzona worked example: `ocr_farzona*.py`,
+  `farzona_*.py`; Dilorom: `dilorom_*.py`)
 - `experimental/` — unwired prototypes (Flask API, network analysis, MARC21 export,
   integration demo). Not imported by the app.
 
@@ -122,9 +126,13 @@ the library schema that was never populated. Nothing imported it.
 
 ## Quick Start
 
+```bash
+git clone https://github.com/moschle/wazan.git
+cd wazan
+```
+
 ### Option A: Docker (recommended)
 ```bash
-cd ~/wazan
 ./deploy.sh
 # Open http://localhost:8501
 ```
@@ -132,7 +140,6 @@ cd ~/wazan
 
 ### Option B: Local
 ```bash
-cd ~/wazan
 pip install -r requirements.txt
 streamlit run ui.py
 ```
@@ -216,7 +223,8 @@ wazan/
 ├── ui.py                # Streamlit web interface
 ├── data/
 │   ├── tajik_lexicon.json   # 68,060 words
-│   └── tajik_corpus.txt     # Corpus (404 MB)
+│   ├── themes.json          # theme word lists
+│   └── validierung/         # validation labels (no texts)
 ├── Dockerfile           # Container definition
 ├── docker-compose.yml   # Service configuration
 └── deploy.sh            # Deployment script
@@ -259,9 +267,13 @@ MIT License
 
 ## Оғози Зуд
 
+```bash
+git clone https://github.com/moschle/wazan.git
+cd wazan
+```
+
 ### Имкони A: Docker (тавсияшаванда)
 ```bash
-cd ~/wazan
 ./deploy.sh
 # Кушодан http://localhost:8501
 ```
@@ -269,7 +281,6 @@ cd ~/wazan
 
 ### Имкони B: Маҳаллӣ
 ```bash
-cd ~/wazan
 pip install -r requirements.txt
 streamlit run ui.py
 ```
@@ -345,7 +356,8 @@ wazan/
 ├── ui.py                # Интерфейси вебии Streamlit
 ├── data/
 │   ├── tajik_lexicon.json   # 68,060 калима
-│   └── tajik_corpus.txt     # Корпус (404 MB)
+│   ├── themes.json          # рӯйхати калимаҳои мавзӯӣ
+│   └── validierung/         # намунаҳои санҷиш (бе матн)
 ├── Dockerfile           # Таърифи контейнер
 ├── docker-compose.yml   # Танзими хидмат
 └── deploy.sh            # Скрипти ба кор андохтан

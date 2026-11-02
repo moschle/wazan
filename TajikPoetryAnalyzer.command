@@ -1,1 +1,0 @@
-/Users/moritzschlenstedt/tajikpoemanalyzer/TajikPoetryAnalyzer.command
