@@ -36,7 +36,6 @@ private research state into `snapshots/knowledge_snapshot_<date>.tar.gz`. Restor
 with `python knowledge_export.py restore <file>` or via the Export page. Share this
 archive only within a defined research group (cf. § 60d UrhG), never publicly.
 
-Full texts were removed from the repository and its entire history in August 2026.
 
 ## Corpus model (v3)
 
@@ -104,7 +103,7 @@ the library schema that was never populated. Nothing imported it.
 - `pages/` — Streamlit UI (1 Analyze, 2 Library, 3 Visualize, 4 Corpus, 5 Export,
   6 Timeline, 7 Analysis, 8 Method)
 - `data/validierung/` — hand-labelled samples used to validate metre and free-verse
-  detection (IDs and hashes only, no texts)
+  detection
 - `tajik_corpus/exports/features_public.json` — the shareable feature layer
 - `scripts/` — maintenance scripts (migration, metre/MTLD recalculation, review rounds)
   and the OCR pipeline (`ocr_tesseract.py`; Farzona worked example: `ocr_farzona*.py`,
@@ -224,7 +223,7 @@ wazan/
 ├── data/
 │   ├── tajik_lexicon.json   # 68,060 words
 │   ├── themes.json          # theme word lists
-│   └── validierung/         # validation labels (no texts)
+│   └── validierung/          # validation labels
 ├── Dockerfile           # Container definition
 ├── docker-compose.yml   # Service configuration
 └── deploy.sh            # Deployment script
@@ -251,14 +250,14 @@ MIT License
 
 # Таҳлилгари Шеъри Тоҷикӣ
 
-Абзоре барои таҳлили шеъри тоҷикӣ бо диққати асосӣ ба **шеъри назм (шиъри нав)** ва таҳлили сохти классикӣ.
+Абзоре барои таҳлили шеъри тоҷикӣ бо диққати асосӣ ба **шеъри озод (шиъри нав)** ва таҳлили сохти классикӣ.
 
 ## Хусусиятҳо
 
 - **Таҳлили сохт**: Сатрҳо, ҳиҷоҳо, шаклҳои строфаҳо
 - **Вазнҳои Арудӣ**: 16 вазни классикии арабӣ-форсӣ (таҷрибавӣ)
 - **Қофия/Радиф**: Шинохти фонетикии қофия
-- **Ченакҳои шеъри назм**: Энжамбеман, ихтилофи дарозии сатр, зичии маъноӣ
+- **Ченакҳои шеъри озод**: Энжамбеман, ихтилофи дарозии сатр, зичии маъноӣ
 - **Навкалимаҳо**: Шинохт бар асоси луғати 68,000+ калима
 - **Таҳлили мавзӯъҳо**: Ишқ, табиат, ватан, дин, ирфон, фалсафа
 - **Содироти Excel**: Ҳисоботҳои таҳлилии фарох
@@ -341,7 +340,7 @@ poem = """
 result = analyzer.analyze_poem(poem)
 
 print(f"Сатрҳо: {result.structural.lines}")
-print(f"Шеъри назм: {result.structural.is_free_verse}")
+print(f"Шеъри озод: {result.structural.is_free_verse}")
 print(f"Вазн: {result.structural.aruz_analysis.identified_meter}")
 print(f"Навкалимаҳо: {result.content.neologisms}")
 ```
@@ -357,7 +356,7 @@ wazan/
 ├── data/
 │   ├── tajik_lexicon.json   # 68,060 калима
 │   ├── themes.json          # рӯйхати калимаҳои мавзӯӣ
-│   └── validierung/         # намунаҳои санҷиш (бе матн)
+│   └── validierung/          # намунаҳои санҷиш
 ├── Dockerfile           # Таърифи контейнер
 ├── docker-compose.yml   # Танзими хидмат
 └── deploy.sh            # Скрипти ба кор андохтан
