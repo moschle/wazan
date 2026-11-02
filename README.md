@@ -28,8 +28,11 @@ never baked into the image.
 **Shareable:** the derived feature layer. `python knowledge_export.py features`
 (or the **Export** page in the app) produces `tajik_corpus/exports/features_public.json`:
 per poem a SHA-256 text hash, the incipit (first line, ≤60 chars), bibliographic
-metadata and the complete analysis (meter, rhyme, radīf, syllables, MTLD, themes).
-Texts cannot be reconstructed from this file — publish it freely (GitHub, Zenodo).
+metadata and the complete analysis (meter, rhyme, radīf, syllables, MTLD, themes,
+share of Persian-Arabic vocabulary). Word counts are pooled per work
+(`vocabulary_by_work`, `neologisms_by_work`), so vocabulary can be compared across
+works, authors and years. Texts cannot be reconstructed from this file — publish it
+freely (GitHub, Zenodo).
 
 **Backup / hand-over:** `python knowledge_export.py snapshot` bundles the complete
 private research state into `snapshots/knowledge_snapshot_<date>.tar.gz`. Restore

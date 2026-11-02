@@ -16,8 +16,10 @@ Two-layer data policy:
     Derived features only (`export_public_features`): stable SHA-256 text
     hashes, incipit (first line, max. 60 chars, for scholarly
     identification), bibliographic metadata and the full analysis layer
-    (meter, rhyme, radif words, syllable counts, MTLD, themes, ...).
-    Texts cannot be reconstructed from this export.
+    (meter, rhyme, radif words, syllable counts, MTLD, themes, ...), plus
+    word counts pooled per work (`vocabulary_by_work`, `neologisms_by_work`)
+    for analyses of vocabulary over time. Texts cannot be reconstructed
+    from this export.
 
 Usage (CLI):
     python knowledge_export.py features   # -> tajik_corpus/exports/features_public.json
@@ -73,10 +75,57 @@ PUBLIC_ANALYSIS_KEYS = {
                    "prosodic_consistency", "stanza_structure", "rhyme_pattern",
                    "is_free_verse", "free_verse_confidence", "meter_confidence"},
     "quality_metrics": {"quality_score", "reliability", "free_verse_analysis"},
+    # numbers only: no word lists from the content block
+    "content": {"theme_distribution", "primary_theme", "stylistic_register",
+                "total_words", "unique_words", "lexical_diversity",
+                "persian_arabic_ratio"},
 }
 # Words rarer than this are dropped from the shared frequency list: hapax
 # legomena are what make a text identifiable.
 VOCAB_MIN_COUNT = 3
+
+import re as _re
+from collections import Counter as _Counter
+_WORD = _re.compile(r"[^\W\d_]+")
+
+
+def _tokens(text: str):
+    return [w.lower() for w in _WORD.findall(unicodedata.normalize("NFC", text or ""))]
+
+
+def _vocabulary_by_work(poems: list) -> dict:
+    """Word counts per work (volume, manuscript ...), not per poem.
+
+    Pooled over a whole work the order of words is gone and no poem can be
+    rebuilt, but vocabulary can still be compared across works, authors and
+    years (loanwords, archaisms, neologisms, register). Words that occur fewer
+    than VOCAB_MIN_COUNT times in the whole corpus are dropped.
+    """
+    total = _Counter()
+    per_poem = []
+    for p in poems:
+        toks = _tokens(p.get("text", ""))
+        total.update(toks)
+        works = [a.get("work_id") for a in p.get("attestations") or []] or [p.get("work_id")]
+        per_poem.append((works, _Counter(toks)))
+    out = {}
+    for works, cnt in per_poem:
+        for wid in set(filter(None, works)):
+            bucket = out.setdefault(wid, _Counter())
+            for w, c in cnt.items():
+                if total[w] >= VOCAB_MIN_COUNT:
+                    bucket[w] += c
+    return {wid: dict(c.most_common()) for wid, c in out.items()}
+
+
+def _neologisms_by_work(poems: list) -> dict:
+    out = {}
+    for p in poems:
+        neo = ((p.get("analysis") or {}).get("content") or {}).get("neologisms") or []
+        works = [a.get("work_id") for a in p.get("attestations") or []] or [p.get("work_id")]
+        for wid in set(filter(None, works)):
+            out.setdefault(wid, _Counter()).update(w.lower() for w in neo)
+    return {wid: dict(c.most_common()) for wid, c in out.items()}
 
 
 def _public_analysis(analysis: dict) -> dict:
@@ -170,6 +219,8 @@ def export_public_features(master_path: Path = MASTER,
         "works": master.get("works", {}),
         "vocabulary": {w: c for w, c in (master.get("vocabulary") or {}).items()
                        if c >= VOCAB_MIN_COUNT},
+        "vocabulary_by_work": _vocabulary_by_work(master.get("poems", [])),
+        "neologisms_by_work": _neologisms_by_work(master.get("poems", [])),
         "poems": poems_out,
     }
 
